@@ -42,4 +42,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function timeBoxes()
+    {
+        return $this->hasMany(TimeBox::class);
+    }
+
+    public function checkOpenTimeBox($user)
+    {
+        $timeBox = TimeBox::where('user_id', $user->id)->get();
+        if ($timeBox->isNotEmpty() && $timeBox->last()->end === null) {
+            return false;
+        }
+        return true;
+    }
 }
