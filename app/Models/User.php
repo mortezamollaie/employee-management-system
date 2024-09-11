@@ -48,12 +48,22 @@ class User extends Authenticatable
         return $this->hasMany(TimeBox::class);
     }
 
-    public function checkOpenTimeBox($user)
+    public function checkCanOpenTimeBox()
     {
-        $timeBox = TimeBox::where('user_id', $user->id)->get();
+        $timeBox = TimeBox::where('user_id', $this->id)->get();
         if ($timeBox->isNotEmpty() && $timeBox->last()->end === null) {
             return false;
         }
         return true;
+    }
+
+    public function getOpenTimeBox()
+    {
+        $timeBox = TimeBox::where('user_id', $this->id)->get();
+        if($timeBox->isEmpty() || $timeBox->last()->end != null) {
+            return false;
+        }else{
+            return $timeBox->last();
+        }
     }
 }

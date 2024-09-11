@@ -16,7 +16,7 @@ class TimeBoxController extends Controller
         }catch (\Exception $exception){
             return response()->json("user not found");
         }
-        if($user->checkOpenTimeBox($user)){
+        if($user->checkCanOpenTimeBox()){
             $timeBox = TimeBox::createTimeBox($request, $user);
             return response()->json("time box started");
         }else{
@@ -26,6 +26,18 @@ class TimeBoxController extends Controller
 
     public function endTimeBox(Request $request, $user_id)
     {
+        try{
+            $user = User::query()->findOrFail($user_id);
+        }catch (\Exception $exception){
+            return response()->json("user not found");
+        }
+        if(!$user->getOpenTimeBox()){
+            return response()->json("time box is not found!");
+        }else{
+            $timeBox = $user->getOpenTimeBox();
+            $timeBox->endTimeBox();
+            return response()->json("time box ended");
+        }
 
     }
 
